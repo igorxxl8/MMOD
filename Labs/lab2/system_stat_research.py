@@ -1,8 +1,7 @@
 from math import sqrt, log10
-from scipy.stats import norm
+from scipy.stats import norm, chi2
 from matplotlib import pyplot as plt
 from lab2 import continuous_system_func
-from lab2.discrete_system_random_values_func import probability_matrix
 
 
 def histogram(values, title, bins=10):
@@ -25,21 +24,21 @@ def X_Y(system):
 def points_estimate_continuous(X, Y):
     n = len(X)
 
-    m_x = continuous_system_func.x_m()
-    m_y = continuous_system_func.y_m()
-    d_x = continuous_system_func.x_d()
-    d_y = continuous_system_func.y_d()
+    mx = continuous_system_func.x_m()
+    my = continuous_system_func.y_m()
+    dx = continuous_system_func.x_d()
+    dy = continuous_system_func.y_d()
 
-    _m_x = me(X, n)
-    _m_y = me(Y, n)
-    _d_x = disp(X, _m_x, n)
-    _d_y = disp(Y, _m_y, n)
+    _mx = me(X, n)
+    _my = me(Y, n)
+    _dx = disp(X, _mx, n)
+    _dy = disp(Y, _my, n)
 
     print('Point estimates:')
-    print('M[X] = {} : M[X]* = {}'.format(m_x, _m_x))
-    print('M[Y] = {} : M[Y]* = {}'.format(m_y, _m_y))
-    print('D[X] = {} : D[X]* = {}'.format(d_x, _d_x))
-    print('D[Y] = {} : D[Y]* = {}'.format(d_y, _d_y))
+    print('M[X] = {} : M[X]* = {}'.format(mx, _mx))
+    print('M[Y] = {} : M[Y]* = {}'.format(my, _my))
+    print('D[X] = {} : D[X]* = {}'.format(dx, _dx))
+    print('D[Y] = {} : D[Y]* = {}'.format(dy, _dy))
 
 
 def me(values, n):
@@ -53,114 +52,114 @@ def disp(values, m, n):
 def intervals_estimate_continuous(X, Y, q):
     n = len(X)
 
-    _m_x = me(X, n)
-    _m_y = me(Y, n)
-    _d_x = disp(X, _m_x, n)
-    _d_y = disp(Y, _m_y, n)
-    _s_x = sqrt(_d_x)
-    _s_y = sqrt(_d_y)
+    _mx = me(X, n)
+    _my = me(Y, n)
+    _dx = disp(X, _mx, n)
+    _dy = disp(Y, _my, n)
+    _sx = sqrt(_dx)
+    _sy = sqrt(_dy)
 
-    k_x = norm.ppf(q) * _s_x / sqrt(n)
-    k_y = norm.ppf(q) * _s_y / sqrt(n)
+    kx = norm.ppf(q) * _sx / sqrt(n)
+    ky = norm.ppf(q) * _sy / sqrt(n)
 
-    print('\nConfidence interval for ME (quantile - {}):'.format(q))
-    print('X: {} < M < {}'.format(_m_x - k_x, _m_x + k_x))
-    print('Y: {} < M < {}'.format(_m_y - k_y, _m_y + k_y))
+    print('\nConfidence interval for ME:'.format(q))
+    print('X: {} < M < {}'.format(_mx - kx, _mx + kx))
+    print('Y: {} < M < {}'.format(_my - ky, _my + ky))
 
-    print('\nConfidence interval for Dispersion (quantile - {}):'.format(q))
+    print('\nConfidence interval for Dispersion:'.format(q))
     excess_x, excess_y = excess(X, Y, n)
-    k_x = norm.ppf(q) * sqrt((excess_x + 2) / n) * _d_x
-    k_y = norm.ppf(q) * sqrt((excess_y + 2) / n) * _d_y
+    kx = norm.ppf(q) * sqrt((excess_x + 2) / n) * _dx
+    ky = norm.ppf(q) * sqrt((excess_y + 2) / n) * _dy
 
-    print('X: {} < D < {}'.format(_d_x - k_x, _d_x + k_x))
-    print('Y: {} < M < {}'.format(_d_y - k_y, _d_y + k_y))
+    print('X: {} < D < {}'.format(_dx - kx, _dx + kx))
+    print('Y: {} < M < {}'.format(_dy - ky, _dy + ky))
 
 
 def excess(X, Y, n):
-    m_x = continuous_system_func.x_m()
-    m_y = continuous_system_func.y_m()
-    d_x = continuous_system_func.x_d()
-    d_y = continuous_system_func.y_d()
+    mx = continuous_system_func.x_m()
+    my = continuous_system_func.y_m()
+    dx = continuous_system_func.x_d()
+    dy = continuous_system_func.y_d()
 
-    mu_x = sum([(value - m_x) ** 4 for value in X]) / n
-    mu_y = sum([(value - m_y) ** 4 for value in Y]) / n
+    mu_x = sum([(value - mx) ** 4 for value in X]) / n
+    mu_y = sum([(value - my) ** 4 for value in Y]) / n
 
-    return mu_x / d_x ** 2 - 3, mu_y / d_y ** 2 - 3
+    return mu_x / dx ** 2 - 3, mu_y / dy ** 2 - 3
 
 
 def check_correlation_continues(x_values, y_values):
     n = len(x_values)
 
-    _m_x = me(x_values, n)
-    _m_y = me(y_values, n)
-    _d_x = disp(x_values, _m_x, n)
-    _d_y = disp(y_values, _m_y, n)
+    _mx = me(x_values, n)
+    _my = me(y_values, n)
+    _dx = disp(x_values, _mx, n)
+    _dy = disp(y_values, _my, n)
 
-    covariance = sum([(x_values[i] - _m_x) * (y_values[i] - _m_y) / n ** 2 for i in range(n)])
+    covariance = sum([(x_values[i] - _mx) * (y_values[i] - _my) / n ** 2 for i in range(n)])
 
-    correlation = covariance / sqrt(_d_x * _d_y)
+    correlation = covariance / sqrt(_dx * _dy)
     print('\nCorrelation: {}'.format(correlation))
 
 
 def z_test_continues(X, Y):
     n = len(X)
 
-    _m_x = me(X, n)
-    _m_y = me(Y, n)
-    m_x = continuous_system_func.x_m()
-    m_y = continuous_system_func.y_m()
-    d_x = continuous_system_func.x_d()
-    d_y = continuous_system_func.y_d()
+    _mx = me(X, n)
+    _my = me(Y, n)
+    mx = continuous_system_func.x_m()
+    my = continuous_system_func.y_m()
+    dx = continuous_system_func.x_d()
+    dy = continuous_system_func.y_d()
 
-    z_x = (_m_x - m_x) / sqrt(d_x * n)
-    z_y = (_m_y - m_y) / sqrt(d_y * n)
+    zx = (_mx - mx) / sqrt(dx * n)
+    zy = (_my - my) / sqrt(dy * n)
 
     print('\nZ-test:')
-    print('X: {}'.format(z_x))
-    print('Y: {}'.format(z_y))
+    print('X: {}'.format(zx))
+    print('Y: {}'.format(zy))
 
 
 def f_test_continues(X, Y):
     n = len(X)
 
-    _m_x = me(X, n)
-    _m_y = me(Y, n)
-    _d_x = disp(X, _m_x, n)
-    _d_y = disp(Y, _m_y, n)
-    d_x = continuous_system_func.x_d()
-    d_y = continuous_system_func.y_d()
+    _mx = me(X, n)
+    _my = me(Y, n)
+    _dx = disp(X, _mx, n)
+    _dy = disp(Y, _my, n)
+    dx = continuous_system_func.x_d()
+    dy = continuous_system_func.y_d()
 
-    if _d_x > d_x:
-        f_x = _d_x / d_x
+    if _dx > dx:
+        f_x = _dx / dx
     else:
-        f_x = d_x / _d_x
+        f_x = dx / _dx
 
-    if _d_y > d_y:
-        f_y = _d_y / d_y
+    if _dy > dy:
+        f_y = _dy / dy
     else:
-        f_y = d_y / _d_y
+        f_y = dy / _dy
 
     print('\nF-test:')
     print('X: {}'.format(f_x))
     print('Y: {}'.format(f_y))
 
 
-def point_estimate_discrete(distribution_table, x_y_matrix):
-    m_x = me_disc(distribution_table, True)
-    m_y = me_disc(distribution_table, False)
-    d_x = disp_disc(distribution_table, m_x, True)
-    d_y = disp_disc(distribution_table, m_y, False)
+def point_estimate_discrete(dist_table, x_y_matrix):
+    mx = me_disc(dist_table, True)
+    my = me_disc(dist_table, False)
+    dx = disp_disc(dist_table, mx, True)
+    dy = disp_disc(dist_table, my, False)
 
-    _m_x = me_disc(x_y_matrix, True)
-    _m_y = me_disc(x_y_matrix, False)
-    _d_x = disp_disc(x_y_matrix, _m_x, True)
-    _d_y = disp_disc(x_y_matrix, _m_y, False)
+    _mx = me_disc(x_y_matrix, True)
+    _my = me_disc(x_y_matrix, False)
+    _dx = disp_disc(x_y_matrix, _mx, True)
+    _dy = disp_disc(x_y_matrix, _my, False)
 
     print('Point estimates:')
-    print('M[X] = {} : M[X]* = {}'.format(m_x, _m_x))
-    print('M[Y] = {} : M[Y]* = {}'.format(m_y, _m_y))
-    print('D[X] = {} : D[X]* = {}'.format(d_x, _d_x))
-    print('D[Y] = {} : D[Y]* = {}'.format(d_y, _d_y))
+    print('M[X] = {} : M[X]* = {}'.format(mx, _mx))
+    print('M[Y] = {} : M[Y]* = {}'.format(my, _my))
+    print('D[X] = {} : D[X]* = {}'.format(dx, _dx))
+    print('D[Y] = {} : D[Y]* = {}'.format(dy, _dy))
 
 
 def me_disc(matrix, is_for_x):
@@ -189,105 +188,105 @@ def disp_disc(matrix, m, is_for_x):
     return d
 
 
-def intervals_estimate_discrete(x_y_matrix, distribution_table, n, q):
-    _m_x = me_disc(x_y_matrix, True)
-    _m_y = me_disc(x_y_matrix, False)
-    _d_x = disp_disc(x_y_matrix, _m_x, True)
-    _d_y = disp_disc(x_y_matrix, _m_y, False)
-    _s_x = sqrt(_d_x)
-    _s_y = sqrt(_d_y)
+def intervals_estimate_discrete(dist_table, x_y_matrix, n, q):
+    _mx = me_disc(x_y_matrix, True)
+    _my = me_disc(x_y_matrix, False)
+    _dx = disp_disc(x_y_matrix, _mx, True)
+    _dy = disp_disc(x_y_matrix, _my, False)
+    _sx = sqrt(_dx)
+    _sy = sqrt(_dy)
 
-    k_x = norm.ppf(q) * _s_x / sqrt(n)
-    k_y = norm.ppf(q) * _s_y / sqrt(n)
+    kx = norm.ppf(q) * _sx / sqrt(n)
+    ky = norm.ppf(q) * _sy / sqrt(n)
 
-    print('\nConfidence interval for ME (quantile - {}):'.format(q))
-    print('X: {} < M < {}'.format(_m_x - k_x, _m_x + k_x))
-    print('Y: {} < M < {}'.format(_m_y - k_y, _m_y + k_y))
+    print('\nConfidence interval for ME:'.format(q))
+    print('X: {} < M < {}'.format(_mx - kx, _mx + kx))
+    print('Y: {} < M < {}'.format(_my - ky, _my + ky))
 
-    print('\nConfidence interval for Dispersion (quantile - {}):'.format(q))
-    excess_x, excess_y = excess_disc(distribution_table, x_y_matrix, n)
-    k_x = norm.ppf(q) * sqrt((excess_x + 2) / n) * _d_x
-    k_y = norm.ppf(q) * sqrt((excess_y + 2) / n) * _d_y
+    print('\nConfidence interval for Dispersion:'.format(q))
+    excess_x, excess_y = excess_disc(dist_table, x_y_matrix, n)
+    kx = norm.ppf(q) * sqrt((excess_x + 2) / n) * _dx
+    ky = norm.ppf(q) * sqrt((excess_y + 3) / n) * _dy
 
-    print('X: {} < D < {}'.format(_d_x - k_x, _d_x + k_x))
-    print('Y: {} < D < {}'.format(_d_y - k_y, _d_y + k_y))
+    print('X: {} < D < {}'.format(_dx - kx, _dx + kx))
+    print('Y: {} < D < {}'.format(_dy - ky, _dy + ky))
 
 
-def excess_disc(distribution_table, x_y_matrix, n):
-    n_size = len(distribution_table)
-    m_size = len(distribution_table[0])
+def excess_disc(dist_table, x_y_matrix, n):
+    _n = len(dist_table)
+    _m = len(dist_table[0])
 
-    m_x = me_disc(distribution_table, True)
-    m_y = me_disc(distribution_table, False)
-    d_x = disp_disc(distribution_table, m_x, True)
-    d_y = disp_disc(distribution_table, m_y, False)
+    mx = me_disc(dist_table, True)
+    my = me_disc(dist_table, False)
+    dx = disp_disc(dist_table, mx, True)
+    dy = disp_disc(dist_table, my, False)
 
     x_density = []
-    for i in range(m_size):
+    for i in range(_m):
         density = 0
 
-        for j in range(n_size):
+        for j in range(_n):
             density += x_y_matrix[j][i]
         x_density.append(density * n)
 
     y_density = [sum(row) * n for row in x_y_matrix]
 
-    mu_x = sum([(value - m_x) ** 4 * x_density[value] for value in range(m_size)]) / n
-    mu_y = sum([(value - m_y) ** 4 * y_density[value] for value in range(n_size)]) / n
+    mu_x = sum([(value - mx) ** 4 * x_density[value] for value in range(_m)]) / n
+    mu_y = sum([(value - my) ** 4 * y_density[value] for value in range(_n)]) / n
 
-    return mu_x / d_x ** 2 - 3, mu_y / d_y ** 2 - 3
+    return mu_x / dx ** 2 - 3, mu_y / dy ** 2 - 3
 
 
 def check_correlation_discrete(x_y_matrix):
-    _m_x = me_disc(x_y_matrix, True)
-    _m_y = me_disc(x_y_matrix, False)
-    _d_x = disp_disc(x_y_matrix, _m_x, True)
-    _d_y = disp_disc(x_y_matrix, _m_y, False)
+    _mx = me_disc(x_y_matrix, True)
+    _my = me_disc(x_y_matrix, False)
+    _dx = disp_disc(x_y_matrix, _mx, True)
+    _dy = disp_disc(x_y_matrix, _my, False)
 
     covariance = 0
     for i in range(len(x_y_matrix)):
         for j in range(len(x_y_matrix[0])):
-            covariance += (i - _m_x) * (i - _m_y) * x_y_matrix[i][j]
+            covariance += (i - _mx) * (i - _my) * x_y_matrix[i][j]
 
-    correlation = covariance / sqrt(_d_x * _d_y)
+    correlation = covariance / sqrt(_dx * _dy)
     print('\nCorrelation: {}'.format(correlation))
 
 
-def z_test_discrete(distribution_table, x_y_matrix, n):
-    _m_x = me_disc(x_y_matrix, True)
-    _m_y = me_disc(x_y_matrix, False)
-    m_x = me_disc(distribution_table, True)
-    m_y = me_disc(distribution_table, False)
-    d_x = disp_disc(distribution_table, m_x, True)
-    d_y = disp_disc(distribution_table, m_y, False)
+def z_test_discrete(dist_table, x_y_matrix, n):
+    _mx = me_disc(x_y_matrix, True)
+    _my = me_disc(x_y_matrix, False)
+    mx = me_disc(dist_table, True)
+    my = me_disc(dist_table, False)
+    dx = disp_disc(dist_table, mx, True)
+    dy = disp_disc(dist_table, my, False)
 
-    z_x = (_m_x - m_x) / sqrt(d_x * n)
-    z_y = (_m_y - m_y) / sqrt(d_y * n)
+    zx = (_mx - mx) / sqrt(dx * n)
+    zy = (_my - my) / sqrt(dy * n)
 
     print('\nZ-test:')
-    print('X: {}'.format(z_x))
-    print('Y: {}'.format(z_y))
+    print('X: {}'.format(zx))
+    print('Y: {}'.format(zy))
 
 
-def f_test_discrete(distribution_table, x_y_matrix):
-    _m_x = me_disc(x_y_matrix, True)
-    _m_y = me_disc(x_y_matrix, False)
-    _d_x = disp_disc(x_y_matrix, _m_x, True)
-    _d_y = disp_disc(x_y_matrix, _m_y, False)
-    m_x = me_disc(distribution_table, True)
-    m_y = me_disc(distribution_table, False)
-    d_x = disp_disc(distribution_table, m_x, True)
-    d_y = disp_disc(distribution_table, m_y, False)
+def f_test_discrete(dist_table, x_y_matrix):
+    _mx = me_disc(x_y_matrix, True)
+    _my = me_disc(x_y_matrix, False)
+    _dx = disp_disc(x_y_matrix, _mx, True)
+    _dy = disp_disc(x_y_matrix, _my, False)
+    mx = me_disc(dist_table, True)
+    my = me_disc(dist_table, False)
+    dx = disp_disc(dist_table, mx, True)
+    dy = disp_disc(dist_table, my, False)
 
-    if _d_x > d_x:
-        f_x = _d_x / d_x
+    if _dx > dx:
+        f_x = _dx / dx
     else:
-        f_x = d_x / _d_x
+        f_x = dx / _dx
 
-    if _d_y > d_y:
-        f_y = _d_y / d_y
+    if _dy > dy:
+        f_y = _dy / dy
     else:
-        f_y = d_y / _d_y
+        f_y = dy / _dy
 
     print('\nF-test:')
     print('X: {}'.format(f_x))
@@ -310,11 +309,43 @@ def continuous_research(x_y_system):
     f_test_continues(X, Y)
 
 
-def discrete_research(x_y_matrix, n):
-    distribution_table = probability_matrix()
-    point_estimate_discrete(distribution_table, x_y_matrix)
-    intervals_estimate_discrete(distribution_table, x_y_matrix, n, 0.95)
-    check_correlation_discrete(x_y_matrix)
+def _print(matrix, title=None):
+    if title:
+        print(f"{title}:")
 
-    z_test_discrete(distribution_table, x_y_matrix, n)
-    f_test_discrete(distribution_table, x_y_matrix)
+    for row in matrix:
+        print(*row, sep="\t", end="\n")
+
+
+def check_discrete_distribution_hypothesis(t, edm, N, alpha=0.05):
+    n = len(t)
+    M = n ** 2
+
+    chi2_val = 0
+    for i in range(n):
+        for j in range(n):
+            chi2_val += ((t[i][j] - edm[i][j]) ** 2) / t[i][j]
+
+    chi2_val = N * chi2_val
+    print("chi^2 = ", chi2_val)
+
+    chi2_table_val = chi2.isf(alpha,  M - 1)
+
+    h0 = chi2_val < chi2_table_val
+    print(f"{chi2_val} < {chi2_table_val} = ", h0)
+    if h0:
+        print("Hypothesis H0 accepted")
+    else:
+        print("Hypothesis H0 refused")
+
+
+def discrete_research(x, y, edm, dist_table, n):
+    _print(edm, "Empiric Distribution Matrix")
+    histogram(x, "X")
+    histogram(y, "Y")
+    point_estimate_discrete(dist_table, edm)
+    intervals_estimate_discrete(dist_table, edm, n, 0.95)
+    check_correlation_discrete(edm)
+
+    z_test_discrete(dist_table, edm, n)
+    f_test_discrete(dist_table, edm)
