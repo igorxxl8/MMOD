@@ -14,8 +14,8 @@ def points_estimate(random_process, time_line):
     print('Points estimates:')
     print(f'ME by sections: {mean_slices}')
     print(f'ME by realisations: {mean_realizations}')
-    print(f'Dispersion by sections: {variance_slices}')
-    print(f'Dispersion by realisation: {variance_realizations}')
+    print(f'Variance by sections: {variance_slices}')
+    print(f'Variance by realisation: {variance_realizations}')
 
 
 def get_mean_slices(random_process, time_line):
@@ -67,14 +67,14 @@ def intervals_estimate(random_process, time_line, q):
     print(f'Confidence interval for ME:')
     print(f'{mean_slices - k} < M < {mean_slices + k}')
 
-    print(f'Confidence interval for Dispersion:')
-    kurtosis = get_excess(random_process, time_line, n)
-    k = norm.ppf(q) * sqrt((kurtosis + 2) / n) * variance_slices
+    print(f'Confidence interval for Variance:')
+    excess = get_excess(random_process, time_line, n)
+    k = norm.ppf(q) * sqrt((excess + 2) / n) * variance_slices
 
     print(f'{variance_slices - k} < D < {variance_slices + k}')
 
 
-def get_excess(random_process, time_line, n):  # экцесса
+def get_excess(random_process, time_line, n):
     excess_t = []
 
     for t in range(n):
@@ -117,7 +117,7 @@ def build_spectrum_with_means(random_process):
     plt.show()
 
 
-def do_research(random_process, time_line):
+def process_research(random_process, time_line):
     q = 0.95
     build_histogram(random_process[0])
     points_estimate(random_process, time_line)

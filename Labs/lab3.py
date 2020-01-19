@@ -13,9 +13,9 @@ if __name__ == '__main__':
     k = 10
 
     random_process = []
+    time_line = rand_process_modeling.get_time_line(time_size, delta_tau)
     for _ in range(k):
-        y = rand_process_modeling.generate_random_process(time_size, delta_tau, n, sigma_x, sigma_y, alpha)
+        y = rand_process_modeling.rand_process(time_line, delta_tau, n, sigma_x, sigma_y, alpha)
         random_process.append(y)
 
-    time_line = rand_process_modeling.get_time_line(time_size, delta_tau)
-    rand_process_research.do_research(random_process, time_line)
+    rand_process_research.process_research(random_process, time_line)

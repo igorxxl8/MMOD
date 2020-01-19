@@ -3,10 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="9272c39b-89d8-48d4-9d2c-12d65fb61712" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab2.py" beforeDir="false" afterPath="$PROJECT_DIR$/lab2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab2/discrete_system_rand_value_gen.py" beforeDir="false" afterPath="$PROJECT_DIR$/lab2/discrete_system_rand_value_gen.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab2/discrete_system_random_values_func.py" beforeDir="false" afterPath="$PROJECT_DIR$/lab2/discrete_system_random_values_func.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab2/system_stat_research.py" beforeDir="false" afterPath="$PROJECT_DIR$/lab2/system_stat_research.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab3.py" beforeDir="false" afterPath="$PROJECT_DIR$/lab3.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab3/rand_process_modeling.py" beforeDir="false" afterPath="$PROJECT_DIR$/lab3/rand_process_modeling.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab3/rand_process_research.py" beforeDir="false" afterPath="$PROJECT_DIR$/lab3/rand_process_research.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
